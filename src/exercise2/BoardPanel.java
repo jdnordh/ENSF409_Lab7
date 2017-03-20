@@ -3,6 +3,7 @@ package exercise2;
 import javax.swing.JPanel;
 
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.GridBagConstraints;
 import javax.swing.JButton;
 
@@ -17,6 +18,7 @@ public class BoardPanel extends JPanel{
 		super(new GridBagLayout());
 		buttons = new JButton[3][3];
 		gbc = new GridBagConstraints();
+		gbc.insets = new Insets(5,5,5,5);
 		for (int i = 0; i < 3; i++){
 			for (int j = 0; j < 3; j++){
 				buttons[i][j] = new JButton(" ");
