@@ -34,34 +34,21 @@ public class GameClient {
 	 */
 	public void communicate()  {
 		System.out.println("Starting...");
-		String input = "";
 		String response = "";
-		while (true) {
 			try {
 				response = socketIn.readLine();
-				while (!response.equals("GIVE")) {			//The client will receive input until prompted to give input
-					if (response.equals("QUIT")) break;
-					System.out.println(response);
-					response = socketIn.readLine();
-				}
-				if (response.equals("QUIT")) break;
-				input = stdIn.readLine();
-				if (!input.equalsIgnoreCase("QUIT")){
-					socketOut.println(input);	
-					socketOut.flush();
-				}else{
-					break;
-				}
-				
+				GFrame gui = new GFrame(response, stdIn, socketOut);
+				gui.setVisible(true);
+				GUIThread gt = new GUIThread(response, gui, socketIn, gui.messages);
+				gt.start();
+				gt.join();
 			} catch (IOException e) {
 				System.out.println("Disconected: " + e.getMessage());
-				break;
 			} catch (NullPointerException n){
 				System.out.println("Disconected: Connection Reset");
-				break;
+			} catch (InterruptedException e) {
+				System.out.println("Disconected: Connection Reset");
 			}
-		}
-		socketOut.println("QUIT");
 		try {
 			stdIn.close();
 			socketIn.close();

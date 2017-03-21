@@ -6,7 +6,7 @@ import java.io.*;
 
 public class Game implements Constants {
 	private Board board;
-
+	
 	private boolean p1;	
 	private boolean p2;
 	private boolean p1turn;
@@ -42,7 +42,6 @@ public class Game implements Constants {
 	public boolean bothSet(){
 		return p1 && p2;
 	}
-	
 	/**
 	 * Each thread assigns a player to the game if it is not already initialized
 	 * @param in Reader
@@ -53,21 +52,25 @@ public class Game implements Constants {
 		while (!p1 && s.equals("Player 1")){
 			try{
 				System.out.println("Setting X player...");
-				out.println("Please enter the name of the \'X\' player: ");
-				out.println("GIVE");
+				out.println("MPlease enter the name of the \'X\' player: ");
 				out.flush();
 				String name= in.readLine();
-				while (name == null) {
-					out.println("Please try again: ");
-					out.println("GIVE");
+				while (name == null || name.charAt(0) != 'N') {
+					out.println("MPlease try again: ");
 					out.flush();
 					name = in.readLine();
 				}
-				xPlayer = new HumanPlayer(name, LETTER_X);
+				char [] temp = new char[name.length()-1];
+				for (int i = 0; i < temp.length; i++){
+					temp[i] = name.charAt(i+1);
+				}
+				xPlayer = new HumanPlayer(new String(temp), LETTER_X);
 				xPlayer.setBoard(board);
 				p1 = true;
-				System.out.println("P1 set");
-				out.println("Waiting for opponent...");
+				System.out.println("P1 set: " + xPlayer.getName());
+				out.println("MWaiting for opponent...");
+				out.flush();
+				out.println("P");
 				out.flush();
 			} catch (IOException e) {
 				out.println("Error: " + e.getMessage());
@@ -77,22 +80,25 @@ public class Game implements Constants {
 		while (!p2 & s.equals("Player 2")){
 			try{
 				System.out.println("Setting O player...");
-				out.println("Please enter the name of the \'O\' player: ");
-				out.println("GIVE");
+				out.println("MPlease enter the name of the \'O\' player: ");
 				out.flush();
-				String name = in.readLine();
-				while (name == null) {
-					out.println("Please try again: ");
-					out.println("GIVE");
+				String name= in.readLine();
+				while (name == null || name.charAt(0) != 'N') {
+					out.println("MPlease try again: ");
 					out.flush();
 					name = in.readLine();
 				}
-			
-				oPlayer = new HumanPlayer(name, LETTER_O);
+				char [] temp = new char[name.length()-1];
+				for (int i = 0; i < temp.length; i++){
+					temp[i] = name.charAt(i+1);
+				}
+				oPlayer = new HumanPlayer(new String(temp), LETTER_O);
 				oPlayer.setBoard(board);
 				p2 = true;
-				System.out.println("P2 set");
-				out.println("Waiting for opponent...");
+				System.out.println("P2 set: " + oPlayer.getName());
+				out.println("MWaiting for opponent...");
+				out.flush();
+				out.println("P");
 				out.flush();
 			} catch (IOException e) {
 				out.println("Error: " + e.getMessage());
@@ -127,10 +133,13 @@ public class Game implements Constants {
 					try {
 						board.display(out);
 						xPlayer.makeMove(in, out);
-						if (!isFin()) board.display(out);
-						out.println("Waiting for opponent...");
-						out.flush();
+						board.display(out);
+						if (!isFin()){
+							out.println("MWaiting for opponent...");
+							out.flush();
+						}
 						p1turn = false;
+						
 					} catch (IOException e) {
 						out.println("Error: " + e.getMessage());
 					}
@@ -139,9 +148,11 @@ public class Game implements Constants {
 					try {
 						board.display(out);
 						oPlayer.makeMove(in, out);
-						if (!isFin()) board.display(out);
-						out.println("Waiting for opponent...");
-						out.flush();
+						board.display(out);
+						if (!isFin()){
+							out.println("MWaiting for opponent...");
+							out.flush();
+						}
 						p1turn = true;
 					} catch (IOException e) {
 						out.println("Error: " + e.getMessage());
@@ -157,12 +168,7 @@ public class Game implements Constants {
 	 * @param p player 
 	 */
 	public void wins(PrintWriter out, Player p){
-		board.display(out);
-		out.print("\n=========================================\n"
-				+ p.getName() +" wins!\n"
-				+ "=========================================\n");
-		out.flush();
-		out.println("QUIT");
+		out.println("F" + p.getName());
 		out.flush();
 	}
 
@@ -171,10 +177,7 @@ public class Game implements Constants {
 	 * @param out Writer from thread
 	 */
 	public void tie(PrintWriter out){
-		board.display(out);
-		out.print("\n=========================================\n"
-				+ "Tie game!\n"
-				+ "=========================================\n");
+		out.println("MTie!");
 		out.flush();
 		out.println("QUIT");
 		out.flush();

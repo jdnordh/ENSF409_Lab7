@@ -38,9 +38,8 @@ public class GameThread extends Thread{
 	public void run(){
 		running = true;
 		System.out.println("Thread " + this.getName() + " started");
-		String temp = "Starting the game...";
-		out.println(temp);
-		game.getBoard().display(out);
+		out.println(this.getName());
+		out.flush();
 		try {
 			while (running){
 				if (game.isFin()) {

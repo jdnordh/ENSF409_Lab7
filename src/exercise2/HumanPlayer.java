@@ -18,38 +18,18 @@ public class HumanPlayer extends Player{
 	public void makeMove(BufferedReader in, PrintWriter out) throws IOException{
 		int row=0, col=0;
 		do {
-			out.println(name + ", what row should your next " + mark + " be placed in? ");
-			out.println("GIVE");
+			out.println("M" + name + ", where should your next " + mark + " be placed? ");
 			out.flush();
 			String input= in.readLine();
-			if (input!=null && input.length()>0) row = input.charAt(0)-48;
-			while (input == null || row<0 || row>2 || input.length()<1) {
-				out.println("Please try again: ");
-				out.println("GIVE");
-				out.flush();
-				input = in.readLine();
-				if (isNumeric(input)){
-					row = input.charAt(0)-48;
+			if (input != null){
+				char [] temp = input.toCharArray();
+				if (temp[1] == 'P'){
+					row = temp[0] - 48;
+					col = temp[2] - 48;
 				}
-				else in=null;
-			}
-			out.println(name + ", what column should your next " + mark + " be placed in? ");
-			out.println("GIVE");
-			out.flush();
-			input = in.readLine();
-			if (input!=null && input.length()>0) col = input.charAt(0)-48;
-			while (input == null || col<0 || col>2 || input.length()<1) {
-				out.print("Please try again: ");
-				out.print("GIVE");
-				out.flush();
-				input = in.readLine();
-				if (isNumeric(input)){
-					col = input.charAt(0)-48;
-				}
-				else input=null;
 			}
 			if (board.getMark(row,col) != ' ') {
-				out.print("Space is already in use: \n");
+				out.println("MSpace is already in use");
 				out.flush();
 			}
 		} while (board.getMark(row,col) != ' ');

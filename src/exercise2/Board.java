@@ -90,20 +90,16 @@ public class Board implements Constants {
 	
 	/** Displays the board as an output to the console */
 	public void display(PrintWriter out) {
-		displayColumnHeaders(out);
-		addHyphens(out);
-		for (int row = 0; row < 3; row++) {
-			addSpaces(out);
-			out.print("    row " + row + ' ');
-			out.flush();
-			for (int col = 0; col < 3; col++){
-				out.print("|  " + getMark(row, col) + "  ");
-				out.flush();
+		String output = "B";
+		for (int i = 0; i < 3; i++){
+			for (int j = 0; j < 3; j++){
+				output += theBoard[i][j];
 			}
-			out.println("|");
-			addSpaces(out);
-			addHyphens(out);
 		}
+		//System.out.println("String length is: " + output.length());
+		String temp = new String(output);
+		out.println(temp);
+		this.display();
 	}
 
 	/** * Add a mark at a certain location
@@ -211,4 +207,43 @@ public class Board implements Constants {
 		out.println("|");
 		out.flush();
 	}
+	
+	/** Displays the board as an output to the console */
+	public void display() {
+		displayColumnHeaders();
+		addHyphens();
+		for (int row = 0; row < 3; row++) {
+			addSpaces();
+			System.out.print("    row " + row + ' ');
+			for (int col = 0; col < 3; col++)
+				System.out.print("|  " + getMark(row, col) + "  ");
+			System.out.println("|");
+			addSpaces();
+			addHyphens();
+		}
+	}
+	/** * Displays column headers */
+	void displayColumnHeaders() {
+		System.out.print("          ");
+		for (int j = 0; j < 3; j++)
+			System.out.print("|col " + j);
+		System.out.println();
+	}
+	
+	/** * Add hyphens to output console */
+	void addHyphens() {
+		System.out.print("          ");
+		for (int j = 0; j < 3; j++)
+			System.out.print("+-----");
+		System.out.println("+");
+	}
+	
+	/** * Add spaces to output console */
+	void addSpaces() {
+		System.out.print("          ");
+		for (int j = 0; j < 3; j++)
+			System.out.print("|     ");
+		System.out.println("|");
+	}
+	
 }

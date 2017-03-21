@@ -46,11 +46,16 @@ public class GameServer {
 			p2 = new GameThread("Player 2", socket);
 			p2.setGame(game);
 			p2.start();
-			
 		} catch (IOException e){
 			System.out.println("Error... " + e.getMessage());
 		}
-		while (p1.isRunning() || p2.isRunning());
+		
+		try{
+			p1.join();
+			p2.join();
+		} catch (InterruptedException e){
+			System.out.println("Error: " + e.getMessage());
+		}
 		
 		System.out.println("Exiting...");
 		try{
