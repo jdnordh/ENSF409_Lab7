@@ -177,9 +177,7 @@ public class Game implements Constants {
 	 * @param out Writer from thread
 	 */
 	public void tie(PrintWriter out){
-		out.println("MTie!");
-		out.flush();
-		out.println("QUIT");
+		out.println("T");
 		out.flush();
 	}
 	

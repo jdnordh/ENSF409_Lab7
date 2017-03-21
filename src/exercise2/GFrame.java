@@ -68,21 +68,29 @@ public class GFrame extends JFrame{
 		gbc.anchor = GridBagConstraints.LINE_END;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
+		bottomLeft.add(new JLabel("Player: "), gbc);
+		gbc.gridy++;
 		bottomLeft.add(new JLabel("Current selection: "), gbc);
 		selText = new SelectionLabel(selection);
-		gbc.gridx = 0;
-		gbc.gridy = 1;
+		gbc.gridy++;
 		bottomLeft.add(new JLabel("Player name: "), gbc);
 		
 		gbc.anchor = GridBagConstraints.LINE_START;
 		gbc.gridx = 1;
 		gbc.gridy = 0;
+		JLabel temp = new JLabel();
+		if (name.equals("Player 1")){
+			temp.setText("X");
+		} else {
+			temp.setText("O");
+		}
+		bottomLeft.add(temp, gbc);
+		gbc.gridy++;
 		bottomLeft.add(selText, gbc);
 		
-		gbc.gridx = 1;
-		gbc.gridy = 1;
-		pName.setToolTipText("Inset the name of your player");
-		pName.setSize(100, 10);
+		gbc.gridy++;
+		pName.setToolTipText("Insert the name of your player");
+		pName.setMinimumSize(null);
 		bottomLeft.add(pName, gbc);
 		
 		bottomLeftExterior = new JPanel(new GridBagLayout());
@@ -113,6 +121,8 @@ public class GFrame extends JFrame{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(400, 400);
 		this.setResizable(false);
+		this.revalidate();
+		this.repaint();
 	}
 	
 	/**

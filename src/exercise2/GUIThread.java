@@ -41,6 +41,10 @@ public class GUIThread extends Thread{
 					messages.updateText(s + " wins!");
 					break;
 				}
+				else if (temp.charAt(0) == 'T'){
+					messages.updateText("It's a tie!");
+					break;
+				}
 				else if (temp.equals("QUIT")){
 					messages.updateText("Exiting...");
 					System.exit(0);
