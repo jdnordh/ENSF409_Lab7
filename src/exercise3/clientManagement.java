@@ -27,6 +27,9 @@ public class clientManagement extends JFrame {
 	private JTextField phoneNumIn;
 	private JTextField searchIn;
 	
+	/** Combo box */
+	private JComboBox<String> comboBox;
+	
 	/** Action listener */
 	private GHandler listen;
 
@@ -135,6 +138,9 @@ public class clientManagement extends JFrame {
 			else if (e.getSource() == clearData){
 				System.out.println(e.getSource().toString());
 			}
+			else if (e.getSource() == comboBox){
+				System.out.println(e.getSource().toString());
+			}
 		}
 		
 	}
@@ -210,7 +216,15 @@ public class clientManagement extends JFrame {
 		rightPanel.add(clientIDIn);
 		
 		rightPanel.add(Box.createRigidArea(new Dimension(0,20)));
-
+		
+		// add combo box for client type
+		rightPanel.add(new JLabel("Client type:"));
+		String [] temp = {"Residential", "Commercial"};
+		comboBox = new JComboBox<String>(temp);
+		comboBox.setEditable(false);
+		comboBox.addActionListener(listen);
+		rightPanel.add(comboBox);
+		
 		// add buttons to bottom panel
 		JPanel buttonPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
