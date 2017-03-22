@@ -4,15 +4,11 @@ import javax.swing.*;
 
 import java.awt.Color;
 import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
 public class GFrame extends JFrame{
-	private BufferedReader in;
 	private PrintWriter out;
 	
 	private static final long serialVersionUID = 1L;
@@ -37,9 +33,8 @@ public class GFrame extends JFrame{
 	 * @param name name of the client 
 	 * @param i Input to the client
 	 */
-	public GFrame(String name, BufferedReader i, PrintWriter o){
+	public GFrame(String name, PrintWriter o){
 		super(name);
-		in = i;
 		out = o;
 		this.setLayout(new GridBagLayout());
 		selection = new int[2];
@@ -53,13 +48,13 @@ public class GFrame extends JFrame{
 		lockin.setOpaque(true);
 		lockin.setBackground(Color.CYAN);
 		
+		gbc.fill = GridBagConstraints.BOTH;
+		
 		topRight = new JPanel(new GridBagLayout());
 		gbc.anchor = GridBagConstraints.CENTER;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		topRight.add(new JLabel("Message window"), gbc);
-		gbc.gridy++;
-		topRight.add(new JSeparator(), gbc);
 		gbc.gridy++;
 		messages = new InputField();
 		topRight.add(messages, gbc);
@@ -119,7 +114,8 @@ public class GFrame extends JFrame{
 		lockin.addActionListener(hand);
 		pName.addActionListener(hand);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setSize(400, 400);
+		//this.setSize(400, 400);
+		this.pack();
 		this.setResizable(false);
 		this.revalidate();
 		this.repaint();
@@ -187,7 +183,7 @@ public class GFrame extends JFrame{
 				boardP.updateColor(2, 2);
 			}
 			else if (event.getSource() == lockin){
-				out.println(selection[0] + "P" + selection[1]);
+				out.println("P" + selection[0] + "P" + selection[1]);
 				out.flush();
 			}
 			else if (event.getSource() == pName){
@@ -199,37 +195,9 @@ public class GFrame extends JFrame{
 		
 	}
 	
-	public void start(){
-		try{
-			while (true){
-				String temp = in.readLine();
-				if (temp.charAt(0) == 'B'){
-					boardP.update(temp);
-				}
-				else if (temp.charAt(0) == 'M'){
-					char [] input = new char[temp.length()-1];
-					for (int i = 0;i < input.length; i++){
-						input[i] = temp.charAt(i+1);
-					}
-					messages.updateText(new String(input));
-				}
-				else if (temp.charAt(0) == 'P'){
-					pName.setEditable(false);
-				}
-				else if (temp.equals("QUIT")){
-					messages.updateText("Exiting...");
-					System.exit(0);
-				}
-			}
-		} catch (IOException e) {
-			System.out.println("Error: " + e.getLocalizedMessage());
-			messages.updateText("Error: " + e.getLocalizedMessage());
-		}
-	}
-	
+	/** testing purposes only, do not run this file to run the client */
 	public static void main(String [] args){
-		GFrame g = new GFrame("Player 1", new BufferedReader(new InputStreamReader(System.in)), 
-				new PrintWriter(System.out));
+		GFrame g = new GFrame("Player 1", new PrintWriter(System.out));
 		g.setVisible(true);
 	}
 	

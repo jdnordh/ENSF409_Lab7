@@ -10,6 +10,7 @@ public class InputField extends JTextPane{
 	 */
 	public InputField(){
 		super();
+		this.setText("          ");
 		this.setEditable(false);
 	}
 	/**

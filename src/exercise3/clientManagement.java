@@ -2,6 +2,8 @@ package exercise3;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 
 /**
@@ -16,6 +18,7 @@ public class clientManagement extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	
+	/** Text fields */
 	private JTextField clientIDIn;
 	private JTextField firstNameIn;
 	private JTextField lastNameIn;
@@ -23,16 +26,32 @@ public class clientManagement extends JFrame {
 	private JTextField postalIn;
 	private JTextField phoneNumIn;
 	private JTextField searchIn;
+	
+	/** Action listener */
+	private GHandler listen;
 
-
+	/** Search Buttons */
+	private JButton search;
+	private JButton clearSearch;
+	
+	/** Client buttons */
+	private JButton save;
+	private JButton delete;
+	private JButton clearData;
+	
+	/** Radio buttons */
+	private JRadioButton clientId;
+	private JRadioButton lastname;
+	private JRadioButton clientType;
+	
 	public clientManagement(){
 		//basic formatting
 		this.setTitle("Client Management System");
 		this.setSize(700, 700);
-		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-
+		//Set an action listener, then apply it to all the buttons
+		listen = new GHandler();
 		
 		//grid bag formatting
 		GridBagLayout layo = new GridBagLayout();
@@ -74,9 +93,55 @@ public class clientManagement extends JFrame {
 		
 		this.pack();
 		//this.setSize(1000, 700);
-
+		this.setVisible(true);
 	}
+	
+	/**
+	 * Handles actions such as buttons and text fields
+	 * @author Jordan Nordh and Jeremy Philips
+	 *
+	 */
+	private class GHandler implements ActionListener{
 
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			/*
+			private JButton save;
+			private JButton delete;
+			private JButton clearData;
+			 */
+			if (e.getSource() == search){
+				System.out.println(e.getSource().toString());
+			}
+			else if (e.getSource() == clearSearch){
+				System.out.println(e.getSource().toString());
+			}
+			else if (e.getSource() == clientId){
+				System.out.println(e.getSource().toString());
+			}
+			else if (e.getSource() == lastname){
+				System.out.println(e.getSource().toString());
+			}
+			else if (e.getSource() == clientType){
+				System.out.println(e.getSource().toString());
+			}
+			else if (e.getSource() == save){
+				System.out.println(e.getSource().toString());
+			}
+			else if (e.getSource() == delete){
+				System.out.println(e.getSource().toString());
+			}
+			else if (e.getSource() == clearData){
+				System.out.println(e.getSource().toString());
+			}
+		}
+		
+	}
+	/**
+	 * Makes the right side panel
+	 * @return JPanel for the right side
+	 */
 	private JPanel makeRightPanel(){
 		JPanel rightPanel = new JPanel();
 		//rightPanel.setPreferredSize(new Dimension(300, 600));
@@ -146,11 +211,35 @@ public class clientManagement extends JFrame {
 		
 		rightPanel.add(Box.createRigidArea(new Dimension(0,20)));
 
+		// add buttons to bottom panel
+		JPanel buttonPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(5,5,5,5);
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		save = new JButton("Save");
+		save.addActionListener(listen);
+		buttonPanel.add(save, gbc);
+		
+		delete = new JButton("Delete");
+		delete.addActionListener(listen);
+		gbc.gridx++;
+		buttonPanel.add(delete, gbc);
+		
+		clearData = new JButton("Clear");
+		clearData.addActionListener(listen);
+		gbc.gridx++;
+		buttonPanel.add(clearData, gbc);
+		
+		rightPanel.add(buttonPanel);
+		
 		
 		return rightPanel;
 	}
 
-	
+	/**
+	 * @return Returns a JPanel for the lower left side
+	 */
 	private JPanel makeLeftLower() {
 		JPanel leftLower = new JPanel();
 		BoxLayout b = new BoxLayout(leftLower, BoxLayout.Y_AXIS);
@@ -177,7 +266,11 @@ public class clientManagement extends JFrame {
 		leftLower.setBorder(BorderFactory.createLineBorder(Color.black));
 		return leftLower;
 	}
-
+	
+	/**
+	 * Make a JPanel
+	 * @return Upper left panel for the gui
+	 */
 	private JPanel makeLeftUpper() {
 		JPanel leftUpper = new JPanel();
 		//leftUpper.setPreferredSize(new Dimension(450, 300));
@@ -196,17 +289,20 @@ public class clientManagement extends JFrame {
 		
 		leftUpper.add(Box.createRigidArea(new Dimension(0, 5)));
 		
-	    JRadioButton clientId = new JRadioButton("Client ID");
+	    clientId = new JRadioButton("Client ID");
+	    clientId.addActionListener(listen);
 	    leftUpper.add(clientId);
 	    
 		leftUpper.add(Box.createRigidArea(new Dimension(0, 5)));
 
-	    JRadioButton lastname = new JRadioButton("Last Name");
+	    lastname = new JRadioButton("Last Name");
+	    lastname.addActionListener(listen);
 	    leftUpper.add(lastname);
 	    
 		leftUpper.add(Box.createRigidArea(new Dimension(0, 5)));
 	    
-	    JRadioButton clientType = new JRadioButton("Client Type");
+	    clientType = new JRadioButton("Client Type");
+	    clientType.addActionListener(listen);
 	    leftUpper.add(clientType);
 	    
 	    ButtonGroup group = new ButtonGroup();
@@ -226,13 +322,15 @@ public class clientManagement extends JFrame {
 		
 		leftUpper.add(Box.createRigidArea(new Dimension(0, 5)));
 		
-		JButton search = new JButton("Search");
+		search = new JButton("Search");
+		search.addActionListener(listen);
 		leftUpper.add(search);
 		
 		leftUpper.add(Box.createRigidArea(new Dimension(0, 5)));
 		
-		JButton clear = new JButton("Clear Search");
-		leftUpper.add(clear);
+		clearSearch = new JButton("Clear Search");
+		clearSearch.addActionListener(listen);
+		leftUpper.add(clearSearch);
 		
 		leftUpper.add(Box.createRigidArea(new Dimension(0, 15)));
 		

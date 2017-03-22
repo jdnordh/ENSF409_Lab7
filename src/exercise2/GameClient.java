@@ -37,7 +37,7 @@ public class GameClient {
 		String response = "";
 			try {
 				response = socketIn.readLine();
-				GFrame gui = new GFrame(response, stdIn, socketOut);
+				GFrame gui = new GFrame(response, socketOut);
 				gui.setVisible(true);
 				GUIThread gt = new GUIThread(response, gui, socketIn, gui.messages);
 				gt.start();
