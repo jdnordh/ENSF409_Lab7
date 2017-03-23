@@ -261,7 +261,7 @@ public class clientManagement extends JFrame {
 		
 		leftLower.add(Box.createRigidArea(new Dimension(0,5)));
 		
-		JLabel label = new JLabel("Search Restults");
+		JLabel label = new JLabel("Search Results");
 		leftLower.add(label);
 		
 		leftLower.add(Box.createRigidArea(new Dimension(0,10)));
