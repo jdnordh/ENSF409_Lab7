@@ -139,6 +139,7 @@ public class clientManagement extends JFrame{
 				tasks.enQueue(temp);
 			}
 			else if (e.getSource() == clearSearch){
+				list.clear();
 				searchIn.setText("");
 				textArea.setText("");
 			}
