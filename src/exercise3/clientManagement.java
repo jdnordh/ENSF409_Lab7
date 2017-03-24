@@ -1,6 +1,8 @@
 package exercise3;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import com.mysql.jdbc.Connection;
 import java.sql.*;
@@ -24,6 +26,9 @@ public class clientManagement extends JFrame{
 	
 	private static final long serialVersionUID = 1L;
 	
+	/** currently selected client */
+	private Client client;
+	
 	/** connection to database */
 	private Connection connect;
 	private Statement state;
@@ -39,6 +44,7 @@ public class clientManagement extends JFrame{
 	protected JTextField phoneNumIn;
 	protected JTextField searchIn;
 	protected JTextArea textArea;
+	protected JList display;
 	
 	/** Combo box */
 	private JComboBox<String> comboBox;
@@ -125,9 +131,9 @@ public class clientManagement extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
-			if (e.getSource() == search){
-				//TODO create search task
-				System.out.println(e.getSource().toString());
+			if (e.getSource() == search || e.getSource() == searchIn){
+				Task temp = new SearchTask(searchIn.getText(), radioSelector);
+				tasks.enQueue(temp);
 			}
 			else if (e.getSource() == clearSearch){
 				searchIn.setText("");
@@ -325,12 +331,23 @@ public class clientManagement extends JFrame{
 		
 		leftLower.add(Box.createRigidArea(new Dimension(0,10)));
 		
+		DefaultListModel<Client> list = new DefaultListModel<Client>();
+		Client bob = new Client(12, "Bob", "Dillan", "Do", "do", "403274560", 'R');
+		list.addElement(bob);
+		display = new JList<Client>(list);
+		
+		display.setFont(new Font("Courier New", Font.BOLD, 12));
+		display.addListSelectionListener(new ListAction());
+		display.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		display.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		display.setVisibleRowCount(-1);
+		
 		JScrollPane textAreaScrollPane = new JScrollPane();
 		textArea = new JTextArea();
 		textAreaScrollPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 		textArea.setFont(new Font("Courier New", Font.BOLD, 12));
 		textArea.setEditable(false);
-		textAreaScrollPane = new JScrollPane(textArea);
+		textAreaScrollPane = new JScrollPane(display);
 		textAreaScrollPane.setPreferredSize(new Dimension(450, 300));
 		leftLower.add(textAreaScrollPane);
 
@@ -338,6 +355,19 @@ public class clientManagement extends JFrame{
 
 		leftLower.setBorder(BorderFactory.createLineBorder(Color.black));
 		return leftLower;
+	}
+	
+	private class ListAction implements ListSelectionListener {
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			client = ((JList<Client>)e.getSource()).getSelectedValue();
+			client.displayInfo(clientIDIn, firstNameIn, lastNameIn, addressIn, postalIn, phoneNumIn, comboBox);
+			dThread.setClient(client);
+		}
+
+		
 	}
 	
 	/**
@@ -382,7 +412,7 @@ public class clientManagement extends JFrame{
 	    group.add(clientId);
 	    group.add(lastname);
 	    group.add(clientType);
-
+	    clientId.setSelected(true);
 		leftUpper.add(Box.createRigidArea(new Dimension(0, 20)));
 		
 		JLabel label3 = new JLabel("Enter the search parameter below: ");
@@ -391,6 +421,7 @@ public class clientManagement extends JFrame{
 		leftUpper.add(Box.createRigidArea(new Dimension(0, 5)));
 		
 		searchIn = new JTextField(20);
+		searchIn.addActionListener(listen);
 		leftUpper.add(searchIn);
 		
 		leftUpper.add(Box.createRigidArea(new Dimension(0, 5)));
@@ -413,10 +444,10 @@ public class clientManagement extends JFrame{
 	
 	public void connectToData(){
 		try {
-			connect = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/ENSF409_Lab7", "labuser", "one");
+			connect = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/ENSF409_Lab7", "labuser", "This is a lab user!");
 			state = connect.createStatement();
 			tasks = new Queue<Task>();
-			dThread = new DataThread(state, tasks);
+			dThread = new DataThread(state, tasks, display);
 			dThread.start();
 		} catch (SQLException e) {
 			//Dispatch a window with an error
