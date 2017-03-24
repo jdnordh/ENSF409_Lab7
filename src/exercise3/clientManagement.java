@@ -1,9 +1,15 @@
 package exercise3;
 
 import javax.swing.*;
+
+import com.mysql.jdbc.Connection;
+import java.sql.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 
 /**
@@ -14,21 +20,29 @@ import java.awt.event.ActionListener;
  */
 
 
-public class clientManagement extends JFrame {
+public class clientManagement extends JFrame{
 	
 	private static final long serialVersionUID = 1L;
 	
+	/** connection to database */
+	private Connection connect;
+	private Statement state;
+	private DataThread dThread;
+	private Queue<Task> tasks;
+	
 	/** Text fields */
-	private JTextField clientIDIn;
-	private JTextField firstNameIn;
-	private JTextField lastNameIn;
-	private JTextField addressIn;
-	private JTextField postalIn;
-	private JTextField phoneNumIn;
-	private JTextField searchIn;
+	protected JTextField clientIDIn;
+	protected JTextField firstNameIn;
+	protected JTextField lastNameIn;
+	protected JTextField addressIn;
+	protected JTextField postalIn;
+	protected JTextField phoneNumIn;
+	protected JTextField searchIn;
+	protected JTextArea textArea;
 	
 	/** Combo box */
 	private JComboBox<String> comboBox;
+	private char comboBoxSelection;
 	
 	/** Action listener */
 	private GHandler listen;
@@ -39,6 +53,7 @@ public class clientManagement extends JFrame {
 	
 	/** Client buttons */
 	private JButton save;
+	private JButton addNew;
 	private JButton delete;
 	private JButton clearData;
 	
@@ -46,6 +61,7 @@ public class clientManagement extends JFrame {
 	private JRadioButton clientId;
 	private JRadioButton lastname;
 	private JRadioButton clientType;
+	private int radioSelector;
 	
 	public clientManagement(){
 		//basic formatting
@@ -109,37 +125,76 @@ public class clientManagement extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
-			/*
-			private JButton save;
-			private JButton delete;
-			private JButton clearData;
-			 */
 			if (e.getSource() == search){
+				//TODO create search task
 				System.out.println(e.getSource().toString());
 			}
 			else if (e.getSource() == clearSearch){
-				System.out.println(e.getSource().toString());
+				searchIn.setText("");
+				textArea.setText("");
 			}
 			else if (e.getSource() == clientId){
-				System.out.println(e.getSource().toString());
+				radioSelector = Search.SEARCH_ID;
 			}
 			else if (e.getSource() == lastname){
-				System.out.println(e.getSource().toString());
+				radioSelector = Search.SEARCH_NAME;
 			}
 			else if (e.getSource() == clientType){
-				System.out.println(e.getSource().toString());
+				radioSelector = Search.SEARCH_TYPE;
 			}
 			else if (e.getSource() == save){
-				System.out.println(e.getSource().toString());
+				try {
+					Client temp = new Client(Integer.parseInt(clientIDIn.getText()), 
+							firstNameIn.getText(), lastNameIn.getText(), 
+							addressIn.getText(), postalIn.getText(), 
+							phoneNumIn.getText(), comboBoxSelection);
+					Task todo = new ClientTask(temp, TaskTypes.SAVE);
+					tasks.enQueue(todo);
+				} catch (Exception x){
+					JOptionPane.showMessageDialog(null,  "Error: " + x.getMessage());
+				}
+			}
+			else if (e.getSource() == addNew){
+				try {
+					Client temp = new Client(Integer.parseInt(clientIDIn.getText()), 
+							firstNameIn.getText(), lastNameIn.getText(), 
+							addressIn.getText(), postalIn.getText(), 
+							phoneNumIn.getText(), comboBoxSelection);
+					Task todo = new ClientTask(temp, TaskTypes.ADD);
+					tasks.enQueue(todo);
+				} catch (Exception x){
+					JOptionPane.showMessageDialog(null,  "Error: " + x.getMessage());
+				}
 			}
 			else if (e.getSource() == delete){
+				try {
+					Client temp = new Client(Integer.parseInt(clientIDIn.getText()), 
+							firstNameIn.getText(), lastNameIn.getText(), 
+							addressIn.getText(), postalIn.getText(), 
+							phoneNumIn.getText(), comboBoxSelection);
+					Task todo = new ClientTask(temp, TaskTypes.DELETE);
+					tasks.enQueue(todo);
+				} catch (Exception x){
+					JOptionPane.showMessageDialog(null,  "Error: " + x.getMessage());
+				}
 				System.out.println(e.getSource().toString());
 			}
 			else if (e.getSource() == clearData){
-				System.out.println(e.getSource().toString());
+				clientIDIn.setText("");
+				firstNameIn.setText("");
+				lastNameIn.setText("");
+				addressIn.setText("");
+				postalIn.setText("");
+				phoneNumIn.setText("");
+				comboBox.setSelectedItem("Residential");
 			}
 			else if (e.getSource() == comboBox){
-				System.out.println(e.getSource().toString());
+				if (comboBox.getSelectedItem() == "Commercial"){
+					comboBoxSelection = 'C';
+				}
+				else {
+					comboBoxSelection = 'R';
+				}
 			}
 		}
 		
@@ -161,11 +216,14 @@ public class clientManagement extends JFrame {
 		
 		rightPanel.add(Box.createRigidArea(new Dimension(0,20)));
 
-		JLabel label2 = new JLabel("Client ID:");
+		/*JLabel label2 = new JLabel("Client ID:");
 		clientIDIn = new JTextField(5);
 		rightPanel.add(label2);
-		rightPanel.add(clientIDIn);
-				
+		rightPanel.add(clientIDIn);*/
+		JLabel label9 = new JLabel("Client ID:");
+		clientIDIn = new JTextField(1);
+		rightPanel.add(label9);
+		rightPanel.add(clientIDIn);		
 		rightPanel.add(Box.createRigidArea(new Dimension(0,10)));
 		
 		JLabel label3 = new JLabel("First Name:");
@@ -203,17 +261,14 @@ public class clientManagement extends JFrame {
 
 		rightPanel.add(Box.createRigidArea(new Dimension(0,10)));
 
-		JLabel label8 = new JLabel("Client Type:");
+		/*JLabel label8 = new JLabel("Client Type:");
 		clientIDIn = new JTextField(1);
 		rightPanel.add(label8);
 		rightPanel.add(clientIDIn);
 		
-		rightPanel.add(Box.createRigidArea(new Dimension(0,10)));
+		rightPanel.add(Box.createRigidArea(new Dimension(0,10)));*/
 
-		JLabel label9 = new JLabel("Client ID:");
-		clientIDIn = new JTextField(1);
-		rightPanel.add(label9);
-		rightPanel.add(clientIDIn);
+		
 		
 		rightPanel.add(Box.createRigidArea(new Dimension(0,20)));
 		
@@ -235,6 +290,11 @@ public class clientManagement extends JFrame {
 		save.addActionListener(listen);
 		buttonPanel.add(save, gbc);
 		
+		addNew = new JButton("Add new");
+		addNew.addActionListener(listen);
+		gbc.gridx++;
+		buttonPanel.add(addNew, gbc);
+		
 		delete = new JButton("Delete");
 		delete.addActionListener(listen);
 		gbc.gridx++;
@@ -246,7 +306,6 @@ public class clientManagement extends JFrame {
 		buttonPanel.add(clearData, gbc);
 		
 		rightPanel.add(buttonPanel);
-		
 		
 		return rightPanel;
 	}
@@ -267,7 +326,7 @@ public class clientManagement extends JFrame {
 		leftLower.add(Box.createRigidArea(new Dimension(0,10)));
 		
 		JScrollPane textAreaScrollPane = new JScrollPane();
-		JTextArea textArea = new JTextArea();
+		textArea = new JTextArea();
 		textAreaScrollPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 		textArea.setFont(new Font("Courier New", Font.BOLD, 12));
 		textArea.setEditable(false);
@@ -351,9 +410,24 @@ public class clientManagement extends JFrame {
 		leftUpper.setBorder(BorderFactory.createLineBorder(Color.black));
 		return leftUpper;
 	}
-
+	
+	public void connectToData(){
+		try {
+			connect = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/ENSF409_Lab7", "labuser", "one");
+			state = connect.createStatement();
+			tasks = new Queue<Task>();
+			dThread = new DataThread(state, tasks);
+			dThread.start();
+		} catch (SQLException e) {
+			//Dispatch a window with an error
+			JOptionPane.showMessageDialog(null,  "Error: " + e.getMessage());
+		}
+		
+	}
+	
 	public static void main(String[] args) {
-		new clientManagement();
+		clientManagement client = new clientManagement();
+		client.connectToData();
 	}
 
 }
