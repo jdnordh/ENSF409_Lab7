@@ -1,6 +1,8 @@
 package exercise3;
 
-import java.sql.Statement;
+import javax.swing.DefaultListModel;
+
+import com.mysql.jdbc.Connection;
 
 public abstract class Task implements TaskTypes{
 	/** The tasks query to deliver to the database */
@@ -12,8 +14,7 @@ public abstract class Task implements TaskTypes{
 		return isFinished;
 	}
 	
-	abstract public void perform(Statement state);
-	abstract public String getResult();
+	abstract public void perform(Connection connect, DefaultListModel<Client> list, Client client, clientManagement gui);
 	/** get the type of task */
 	public int type(){
 		return type;

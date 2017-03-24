@@ -1,25 +1,27 @@
 package exercise3;
 
-import java.sql.Statement;
-
-import javax.swing.JList;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
+import com.mysql.jdbc.Connection;
+
 public class DataThread extends Thread implements TaskTypes{
-	private Statement state;
+	private Connection connect;
 	private Queue<Task> tasks;
 	protected JTextArea textArea;
-	protected JList display;
+	private DefaultListModel<Client> list;
 	private boolean running;
 	private Client client;
+	private clientManagement gui;
 	
 	/** constructor */
-	public DataThread(Statement s, Queue<Task> t, JList d){
+	public DataThread(Connection c, Queue<Task> t, DefaultListModel<Client> d, clientManagement mang){
 		super("DataThread");
 		tasks = t;
-		state = s;
-		display = d;
+		connect = c;
+		list = d;
+		gui = mang;
 	}
 	
 	public void setClient(Client c){
@@ -37,22 +39,19 @@ public class DataThread extends Thread implements TaskTypes{
 			try{
 				if (!tasks.isEmpty()){
 					Task temp = tasks.deQueue();
-					temp.perform(state);
+					temp.perform(connect, list, client, gui);
 					if (temp.isFinished()){
 						if (temp.type() == SEARCH){
-							textArea.setText(temp.getResult());
+							
 						}
 						else if (temp.type() == ADD){
-							textArea.setText("The client "+ temp.client().getFirstName() + " " + 
-						temp.client().getLastName() + " was added.\n");
+							
 						}
 						else if (temp.type() == SAVE){
-							textArea.setText("The client "+ temp.client().getFirstName() + " " + 
-									temp.client().getLastName() + " was saved.\n");
+							
 						}
 						else if (temp.type() == DELETE){
-							textArea.setText("The client "+ temp.client().getFirstName() + " " + 
-									temp.client().getLastName() + " was deleted.\n");
+							
 						}
 					}
 				}

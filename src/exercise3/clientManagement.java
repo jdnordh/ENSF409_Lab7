@@ -5,8 +5,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.mysql.jdbc.Connection;
-import java.sql.*;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,7 +29,6 @@ public class clientManagement extends JFrame{
 	
 	/** connection to database */
 	private Connection connect;
-	private Statement state;
 	private DataThread dThread;
 	private Queue<Task> tasks;
 	
@@ -43,12 +40,17 @@ public class clientManagement extends JFrame{
 	protected JTextField postalIn;
 	protected JTextField phoneNumIn;
 	protected JTextField searchIn;
+	
+	// This is unused at the moment
 	protected JTextArea textArea;
-	protected JList display;
+	
+	/** This is the list of clients */
+	protected JList<Client> display;
+	private DefaultListModel<Client> list;
 	
 	/** Combo box */
-	private JComboBox<String> comboBox;
-	private char comboBoxSelection;
+	protected JComboBox<String> comboBox;
+	protected char comboBoxSelection;
 	
 	/** Action listener */
 	private GHandler listen;
@@ -132,6 +134,7 @@ public class clientManagement extends JFrame{
 		public void actionPerformed(ActionEvent e) {
 			
 			if (e.getSource() == search || e.getSource() == searchIn){
+				list.clear();
 				Task temp = new SearchTask(searchIn.getText(), radioSelector);
 				tasks.enQueue(temp);
 			}
@@ -183,7 +186,6 @@ public class clientManagement extends JFrame{
 				} catch (Exception x){
 					JOptionPane.showMessageDialog(null,  "Error: " + x.getMessage());
 				}
-				System.out.println(e.getSource().toString());
 			}
 			else if (e.getSource() == clearData){
 				clientIDIn.setText("");
@@ -331,9 +333,7 @@ public class clientManagement extends JFrame{
 		
 		leftLower.add(Box.createRigidArea(new Dimension(0,10)));
 		
-		DefaultListModel<Client> list = new DefaultListModel<Client>();
-		Client bob = new Client(12, "Bob", "Dillan", "Do", "do", "403274560", 'R');
-		list.addElement(bob);
+		list = new DefaultListModel<Client>();
 		display = new JList<Client>(list);
 		
 		display.setFont(new Font("Courier New", Font.BOLD, 12));
@@ -445,9 +445,8 @@ public class clientManagement extends JFrame{
 	public void connectToData(){
 		try {
 			connect = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/ENSF409_Lab7", "labuser", "This is a lab user!");
-			state = connect.createStatement();
 			tasks = new Queue<Task>();
-			dThread = new DataThread(state, tasks, display);
+			dThread = new DataThread(connect, tasks, list, this);
 			dThread.start();
 		} catch (SQLException e) {
 			//Dispatch a window with an error
