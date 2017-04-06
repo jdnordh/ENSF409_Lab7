@@ -23,9 +23,9 @@ public class HumanPlayer extends Player{
 			String input= in.readLine();
 			if (input != null){
 				char [] temp = input.toCharArray();
-				if (temp[0] == 'P' && temp [2] == 'P'){
-					row = temp[1] - 48;
-					col = temp[3] - 48;
+				if (temp[1] == 'P'){
+					row = temp[0] - 48;
+					col = temp[2] - 48;
 				}
 			}
 			if (board.getMark(row,col) != ' ') {

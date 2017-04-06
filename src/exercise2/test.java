@@ -38,7 +38,6 @@ public class test {
       mainFrame.add(headerLabel);
       mainFrame.add(controlPanel);
       mainFrame.add(statusLabel);
-      mainFrame.add(new JTextField());
       mainFrame.setVisible(true);  
    }
    private void showJPanelDemo(){
